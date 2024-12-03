@@ -67,8 +67,5 @@ public class D02 extends AoC {
         System.out.println("Part one : " + safe);
         safe += reports.get(Boolean.FALSE).stream().filter(Report::isSafeSkippingOne).count();
         System.out.println("Part two : " + safe);
-
-
-        //System.out.println("Part one : "+reports.stream().filter(r -> r.isSafe(true)).count());
     }
 }
