@@ -30,7 +30,7 @@ public class Grid<N> {
             for (int x = 0; x < width; x++) {
                 K k = mapper.apply(line.charAt(x));
                 if (k != null) {
-                    grid.map.put(new Position(x, y), mapper.apply(line.charAt(x)));
+                    grid.map.put(new Position(x, y), k);
                 }
             }
         }
@@ -64,6 +64,7 @@ public class Grid<N> {
     public N get(Position pos) {
         return map.get(pos);
     }
+
     public void put(Position pos, N value) {
         map.put(pos, value);
     }
@@ -106,5 +107,9 @@ public class Grid<N> {
 
     public boolean contains(Position pos) {
         return map.containsKey(pos);
+    }
+
+    public boolean isOnTheEdge(Position p) {
+        return p.x() == 0 || p.y() == 0 || p.x() == width - 1 || p.y() == height - 1;
     }
 }
