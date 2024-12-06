@@ -23,6 +23,7 @@ public class D06 extends AoC {
 
         System.out.println("Part 1 ("+expected+") : " + guard.pathToExit(grid));
         Set<Position> path = new HashSet<>(guard.path.keySet());
+        long time = System.currentTimeMillis();
         path.remove(start);
         int counter = 0;
         for (Position p : path) {
@@ -33,7 +34,7 @@ public class D06 extends AoC {
             }
             grid.remove(p);
         }
-        System.out.println("Part 2 ("+loops+") : " + counter);
+        System.out.println("Part 2 ("+loops+") : " + counter+" - "+(System.currentTimeMillis() - time)+" ms");
     }
 
     private class Guard {
@@ -95,6 +96,6 @@ public class D06 extends AoC {
         System.out.println("Test : ");
         solve(getTestInputPath(), 41, 6);
         System.out.println("Real : ");
-        solve(getInputPath(), 4789, 0);
+        solve(getInputPath(), 4789, 1304);
     }
 }
