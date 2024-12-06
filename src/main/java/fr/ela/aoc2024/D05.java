@@ -1,6 +1,8 @@
 package fr.ela.aoc2024;
 
 
+import fr.ela.aoc2024.utils.Pair;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,8 +62,14 @@ public class D05 extends AoC {
         return true;
     }
 
-    private <T> T findMiddle(List<T> list) {
-        return list.get((list.size() - 1) / 2);
+    private Pair<Boolean, Integer> findMiddle(List<Integer> list, Map<Integer, Rule> rules) {
+        List<Integer> ordered = list;
+        boolean isOrdered = true;
+        if (! isOrdered(list, rules)) {
+            isOrdered = false;
+            ordered = sort(list, rules);
+        }
+        return new Pair<>(isOrdered, ordered.get((ordered.size() - 1) / 2));
     }
 
     private List<Integer> toIntegers(String s) {
@@ -78,17 +86,13 @@ public class D05 extends AoC {
     void solve(Path path) {
         var input = splitOnEmptyLines(path);
         var rules = loadRules(input.get(0));
-        Map<Boolean, List<List<Integer>>> inputs = input.get(1).stream().map(this::toIntegers)
-                .collect(Collectors.groupingBy(l -> isOrdered(l, rules)));
+        Map<Boolean, Integer> result = input.get(1).stream()
+                .map(this::toIntegers)
+                .map(in -> findMiddle(in, rules))
+                .collect(Collectors.toMap(Pair::key, Pair::value, Integer::sum));
 
-        var ordered = inputs.get(Boolean.TRUE).stream()
-                .mapToInt(this::findMiddle)
-                .sum();
-        System.out.println("Part 1 : " + ordered);
-        var sorted = inputs.get(Boolean.FALSE).stream()
-                .mapToInt(list -> findMiddle(sort(list, rules)))
-                .sum();
-        System.out.println("Part 2 : " + sorted);
+        System.out.println("Part 1 : " + result.get(true));
+        System.out.println("Part 2 : " + result.get(false));
     }
 
     @Override
