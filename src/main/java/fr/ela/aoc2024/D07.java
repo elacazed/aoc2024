@@ -39,6 +39,9 @@ public class D07 extends AoC {
     }
 
     boolean isCorrectFromIndex(Input input, int index, Set<Operator> operators, long current) {
+        if (current > input.result) {
+            return false;
+        }
         final int nextIndex = index + 1;
         if (nextIndex == input.values.length) {
             return current == input.result;
@@ -62,8 +65,14 @@ public class D07 extends AoC {
     public void solve(Path inputPath, String s, long expected1, long expected2) {
         System.out.println("--- " + s + " ----");
         List<String> inputs = list(inputPath);
-        System.out.println("Part 1 ("+expected1+") : " + solve(inputs, EnumSet.of(Operator.ADD, Operator.MUL)));
-        System.out.println("Part 2 ("+expected2+") : " + solve(inputs, EnumSet.allOf(Operator.class)));
+        long time = System.currentTimeMillis();
+        long res = solve(inputs, EnumSet.of(Operator.ADD, Operator.MUL));
+        time = System.currentTimeMillis() - time;
+        System.out.println("Part 1 ("+expected1+") : " + res +" - "+time);
+        time = System.currentTimeMillis();
+        res = solve(inputs, EnumSet.allOf(Operator.class));
+        time = System.currentTimeMillis() - time;
+        System.out.println("Part 2 ("+expected2+") : " + res +" - "+time);
     }
 
     @Override
