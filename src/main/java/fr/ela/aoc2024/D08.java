@@ -1,50 +1,57 @@
 package fr.ela.aoc2024;
 
 import fr.ela.aoc2024.utils.Grid;
-import fr.ela.aoc2024.utils.Pair;
 import fr.ela.aoc2024.utils.Position;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 public class D08 extends AoC {
 
     public record Beacons(Grid<Character> grid, Set<Character> frequencies) {
 
-        private Set<Position> antiNodes() {
+        private Set<Position> antiNodes(boolean allPositions) {
             return frequencies.stream()
-                    .map(c -> antiNodes(c))
+                    .map(c -> antiNodes(c, allPositions))
                     .flatMap(Set::stream)
                     .collect(Collectors.toSet());
         }
 
-        private Set<Position> antiNodes(Character frequency) {
+        private Set<Position> antiNodes(Character frequency, boolean allPositions) {
             List<Position> antennas = grid.getPositionsOf(frequency);
-            int size= antennas.size();
+            int size = antennas.size();
             Set<Position> antiNodes = new HashSet<>();
             for (int i = 0; i < size; i++) {
                 for (int j = i + 1; j < size; j++) {
-                    Pair<Position, Position> an = antiNodes(antennas.get(i), antennas.get(j));
-                    if (grid.inBounds(an.key())) {
-                        antiNodes.add(an.key());
-                    }
-                    if (grid.inBounds(an.value())) {
-                        antiNodes.add(an.value());
-                    }
+                    antiNodes.addAll(antiNodes(antennas.get(i), antennas.get(j), allPositions));
                 }
             }
             return antiNodes;
         }
 
-        private Pair<Position, Position> antiNodes(Position p1, Position p2) {
+        private List<Position> antiNodes(Position p1, Position p2, boolean allPositions) {
             int dx = p2.x() - p1.x();
             int dy = p2.y() - p1.y();
-            return new Pair<>(
-                    new Position(p1.x() - dx, p1.y() - dy),
-                    new Position(p1.x() + 2 * dx, p1.y() + 2 * dy));
+            List<Position> result = new ArrayList<>();
+            int start = 1;
+            int end = 2;
+            if (allPositions) {
+                start = Math.max(Math.abs(grid.getWidth() / dx), Math.abs(grid.getHeight() / dy));
+                end = start;
+            }
+
+            for (int i = -1 * start; i <= end; i++) {
+                Position next = new Position(p1.x() + i * dx, p1.y() + i * dy);
+                if ((allPositions || i == -1 || i == 2) && grid.inBounds(next)) {
+                    result.add(next);
+                }
+            }
+            return result;
         }
     }
 
@@ -68,11 +75,11 @@ public class D08 extends AoC {
         System.out.println("--- " + s + " ----");
         Beacons beacons = loadGrid(inputPath);
         long time = System.currentTimeMillis();
-        int res = beacons.antiNodes().size();
+        int res = beacons.antiNodes(false).size();
         time = System.currentTimeMillis() - time;
         System.out.println("Part 1 (" + expected1 + ") : " + res + " - " + time);
         time = System.currentTimeMillis();
-
+        res = beacons.antiNodes(true).size();
         time = System.currentTimeMillis() - time;
         System.out.println("Part 2 (" + expected2 + ") : " + res + " - " + time);
     }
@@ -80,7 +87,7 @@ public class D08 extends AoC {
 
     @Override
     public void run() {
-        solve(getTestInputPath(), "Test", 14, 0);
-        solve(getInputPath(), "Real", 0, 0);
+        solve(getTestInputPath(), "Test", 14, 34);
+        solve(getInputPath(), "Real", 357, 0);
     }
 }
