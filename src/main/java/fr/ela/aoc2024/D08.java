@@ -41,7 +41,7 @@ public class D08 extends AoC {
             int start = 1;
             int end = 2;
             if (allPositions) {
-                start = Math.max(Math.abs(grid.getWidth() / dx), Math.abs(grid.getHeight() / dy));
+                start = Math.min(Math.abs(grid.getWidth() / dx), Math.abs(grid.getHeight() / dy));
                 end = start;
             }
 
@@ -54,7 +54,6 @@ public class D08 extends AoC {
             return result;
         }
     }
-
 
     public Beacons loadGrid(Path inputPath) {
         final Set<Character> list = new HashSet<>();
@@ -88,6 +87,6 @@ public class D08 extends AoC {
     @Override
     public void run() {
         solve(getTestInputPath(), "Test", 14, 34);
-        solve(getInputPath(), "Real", 357, 0);
+        solve(getInputPath(), "Real", 357, 1266);
     }
 }
