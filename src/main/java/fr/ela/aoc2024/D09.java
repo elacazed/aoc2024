@@ -1,15 +1,16 @@
 package fr.ela.aoc2024;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.IntStream;
 import fr.ela.aoc2024.utils.Pair;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.IntStream;
 
 public class D09 extends AoC {
 
     static final char[] CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+
     public class FileSystemElement {
         int position;
         int size;
@@ -18,24 +19,25 @@ public class D09 extends AoC {
             this.position = position;
             this.size = size;
         }
-        boolean isHole() {
-            return false;
-        }
+
         int nextElementPosition() {
-            return position+size;
+            return position + size;
         }
 
         public String toString() {
-            return position+"."+size;
+            return position + "." + size;
         }
     }
-    public class Hole extends FileSystemElement {
+
+    public class Hole extends FileSystemElement implements Comparable<Hole> {
         public Hole(int position, int size) {
             super(position, size);
         }
 
-        boolean isHole() {
-            return true;
+        @Override
+        public int compareTo(Hole o) {
+            int s = this.size - o.size;
+            return s == 0 ? this.position - o.position : s;
         }
     }
 
@@ -46,19 +48,22 @@ public class D09 extends AoC {
             super(position, size);
             this.id = id;
         }
+
         public String toString() {
-            return "["+id+"]"+position+"."+size;
+            return "[" + id + "]" + position + "." + size;
         }
     }
 
     private class FileSystem {
         final String filesystem;
         final int[] blocks;
-        final List<File> files = new LinkedList<>();
-        final List<Hole> holes = new LinkedList<>();
+        final List<File> files;
+        final List<Hole> holes;
 
         public FileSystem(String s) {
             this.filesystem = s;
+            files = new ArrayList<>(filesystem.length() / 2 + 1);
+            holes = new ArrayList<>(filesystem.length() / 2 + 1);
             int size = s.chars().map(c -> c - '0').sum();
             blocks = new int[size];
             boolean file = true;
@@ -119,10 +124,9 @@ public class D09 extends AoC {
             for (int i = 1; i <= holes.size(); i++) {
                 Hole before = holes.get(i - 1);
                 if (file.position == before.nextElementPosition()) {
-                    return new Pair<Hole,Hole>(before, i == holes.size() ? null : holes.get(i));
+                    return new Pair<Hole, Hole>(before, i == holes.size() ? null : holes.get(i));
                 }
             }
-
             throw new IllegalStateException();
         }
 
@@ -183,6 +187,6 @@ public class D09 extends AoC {
     @Override
     public void run() {
         solve("23331331214141314023", "Test", 1928, 2858L);
-        solve(readFile(getInputPath()), "Real", 6435922584968L, 0L);
+        solve(readFile(getInputPath()), "Real", 6435922584968L, 6469636832766L);
     }
 }
