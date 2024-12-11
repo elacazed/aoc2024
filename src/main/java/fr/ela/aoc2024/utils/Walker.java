@@ -68,7 +68,7 @@ public class Walker<N, C extends Comparable<C>> {
                 queue.add(s);
             }
         }
-        return new Path<>(List.of(), null);
+        return new Path<>(new LinkedList<>(), null);
     }
 
     public Collection<Path<N, C>> findAllPaths(N start, Predicate<N> endReached) {
