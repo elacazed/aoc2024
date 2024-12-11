@@ -60,6 +60,7 @@ public class D11 extends AoC {
         time = System.currentTimeMillis() - time;
         System.out.println("Part 1 (" + expected1 + ") : " + res + " - " + time);
         time = System.currentTimeMillis();
+        res = countStones(stones.stream(), 75);
         time = System.currentTimeMillis() - time;
         System.out.println("Part 2 (" + expected2 + ") : " + res + " - " + time);
     }
@@ -67,6 +68,6 @@ public class D11 extends AoC {
     @Override
     public void run() {
         solve("125 17", "Test", 55312, -1);
-        solve("0 5601550 3914 852 50706 68 6 645371", "Real", 189092, -1);
+        solve("0 5601550 3914 852 50706 68 6 645371", "Real", 189092, 224869647102559L);
     }
 }
