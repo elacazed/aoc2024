@@ -85,15 +85,15 @@ public class Grid<N> {
     }
 
     public List<Position> cardinals(Position position) {
-        return position.cardinals().stream().filter(this::inBounds).toList();
+        return position.cardinalsList().stream().filter(this::inBounds).toList();
     }
 
     public List<Position> cardinalsIf(Position position, Predicate<Position> pred) {
-        return position.cardinals().stream().filter(this::inBounds).filter(pred).toList();
+        return position.cardinals().filter(this::inBounds).filter(pred).toList();
     }
 
     public List<Position> to(Position from, Set<Position> path) {
-        return from.cardinals().stream().filter(this::contains).filter(p -> !path.contains(p)).toList();
+        return from.cardinals().filter(this::contains).filter(p -> !path.contains(p)).toList();
     }
 
     public List<char[]> draw(Function<N, Character> mapper) {

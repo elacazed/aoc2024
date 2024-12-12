@@ -1,5 +1,6 @@
 package fr.ela.aoc2024;
 
+import fr.ela.aoc2024.utils.Diagonal;
 import fr.ela.aoc2024.utils.Grid;
 import fr.ela.aoc2024.utils.Position;
 
@@ -15,29 +16,52 @@ import java.util.stream.Collectors;
 
 public class D12 extends AoC {
 
-    private final List<String> smallTest = Arrays.asList("""
-            AAAA
-            BBCD
-            BBCC
-            EEEC""".split("\\n"));
-    private final List<String> smallTest2 = Arrays.asList("""
-            OOOOO
-            OXOXO
-            OOOOO
-            OXOXO
-            OOOOO
-            """.split("\\n"));
+    // la diagonale d'une position est un coin si :
+    // - il n'y a rien dans les cotés adjacents de la diagonale, qu'il y ait ou pas qqchoe dans la diagnale
+    //      oo?  Xo?
+    //      oX?  oX?
+    //      ???  ???
+    //   Sont des coins
+    // - ou s'il n'y a rien dans la diagonale, ET qu'il y a des éléments dans les deux cotés adjacents.
+    //      oX?
+    //      XX?
+    //      ???
+    //   est un coin.
+    private boolean isCorner(Position p, Diagonal d, Set<Position> positions) {
+        if (d.directions().noneMatch(dir -> positions.contains(dir.move(p)))) {
+            return true;
+        }
+        if (!positions.contains(d.move(p)) && d.directions().allMatch(dir -> positions.contains(dir.move(p)))) {
+            return true;
+        }
+        return false;
+    }
+
+    private Long corners(Position position, Set<Position> plot) {
+        return Arrays.stream(Diagonal.values()).filter(d -> isCorner(position, d, plot)).count();
+    }
+
+    // on a autant de cotés que de coins.
+    private long getNumberOfSides(final Set<Position> plot) {
+        return plot.stream().mapToLong(p -> corners(p, plot)).sum();
+    }
 
     class Garden {
-        Map<Character, Set<Position>> plantsPositions;
-        Grid<Character> grid;
+        final Map<Character, Set<Position>> plantsPositions;
+        final Grid<Character> grid;
+        final Map<Character, List<Set<Position>>> plots;
 
         public Garden(List<String> input) {
             this.plantsPositions = new HashMap<>();
             grid = Grid.parseCharactersGrid(input, Function.identity(), (p, c) -> plantsPositions.computeIfAbsent(c, HashSet::new).add(p));
+            plots = computePlots();
         }
 
         public Map<Character, List<Set<Position>>> getAllPlots() {
+            return plots;
+        }
+
+        private Map<Character, List<Set<Position>>> computePlots() {
             return plantsPositions.keySet().stream()
                     .collect(Collectors.toMap(Function.identity(), this::getPlots));
         }
@@ -56,7 +80,7 @@ public class D12 extends AoC {
             Set<Position> plot = new HashSet<>();
             plot.add(p);
             positions.remove(p);
-            List<Position> neighbors = p.cardinals().stream().filter(n -> positions.contains(n) && !plot.contains(n)).toList();
+            List<Position> neighbors = p.cardinalsList().stream().filter(n -> positions.contains(n) && !plot.contains(n)).toList();
             if (neighbors.isEmpty()) {
                 return plot;
             } else {
@@ -70,19 +94,28 @@ public class D12 extends AoC {
 
         private Long perimeter(Set<Position> plot) {
             long total = 4 * plot.size();
-            long common = plot.stream().mapToLong(p -> p.cardinals().stream().filter(plot::contains).count()).sum();
+            long common = plot.stream().mapToLong(p -> p.cardinalsList().stream().filter(plot::contains).count()).sum();
             return total - common;
+        }
+
+        public Long discountCost(Set<Position> plot) {
+            long sides = getNumberOfSides(plot);
+            return plot.size() * sides;
+        }
+
+        public Long discountCost() {
+            return getAllPlots().values().stream().flatMap(List::stream).mapToLong(this::discountCost).sum();
         }
 
         private Long fencingCost(Set<Position> plot) {
             long value = plot.size() * perimeter(plot);
-            //System.out.println(grid.get(plot.iterator().next())+" : "+value);
             return value;
         }
 
         private long fencingCost() {
-            return getAllPlots().values().stream().flatMap(List::stream).mapToLong(plot -> fencingCost(plot)).sum();
+            return getAllPlots().values().stream().flatMap(List::stream).mapToLong(this::fencingCost).sum();
         }
+
     }
 
     public void solve(List<String> input, String step, long expected1, long expected2) {
@@ -95,17 +128,15 @@ public class D12 extends AoC {
         time = System.currentTimeMillis() - time;
         System.out.println("Part 1 (" + expected1 + ") : " + res + " - " + time);
         time = System.currentTimeMillis();
-
+        res = garden.discountCost();
         time = System.currentTimeMillis() - time;
         System.out.println("Part 2 (" + expected2 + ") : " + res + " - " + time);
     }
 
     @Override
     public void run() {
-        solve(smallTest, "Small Test", 140, -1);
-        //solve(smallTest2, "Small Test", 140, -1);
-        solve(list(getTestInputPath()), "Test", 1930, -1);
-        solve(list(getInputPath()), "Real", -1, -1);
+        solve(list(getTestInputPath()), "Test", 1930, 1206);
+        solve(list(getInputPath()), "Real", 1446042, 902742);
     }
 }
 

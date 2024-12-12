@@ -11,15 +11,24 @@ public record Position(int x, int y) {
     }
 
     public int distance() {
-        return x+y;
+        return x + y;
     }
 
-    public List<Position> cardinals() {
-        return cards().toList();
+    public List<Position> cardinalsList() {
+        return cardinals().toList();
     }
 
-    public Stream<Position> cards() {
+    public Stream<Position> cardinals() {
         return Arrays.stream(Direction.values()).map(d -> d.move(this));
+    }
+
+    public Stream<Position> neighbours() {
+        return Stream.concat(Arrays.stream(Direction.values()).map(d -> d.move(this)),
+                Arrays.stream(Diagonal.values()).map(d -> d.move(this)));
+    }
+
+    public List<Position> neighboursList() {
+        return neighbours().toList();
     }
 
     public Position modulo(int xmax, int ymax) {
@@ -27,6 +36,6 @@ public record Position(int x, int y) {
     }
 
     public String toString() {
-        return "["+x+","+y+"]";
+        return "[" + x + "," + y + "]";
     }
 }

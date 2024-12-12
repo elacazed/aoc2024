@@ -1,7 +1,7 @@
 package fr.ela.aoc2024;
 
 
-import fr.ela.aoc2024.utils.Diagonals;
+import fr.ela.aoc2024.utils.Diagonal;
 import fr.ela.aoc2024.utils.Grid;
 import fr.ela.aoc2024.utils.Position;
 
@@ -62,10 +62,10 @@ public class D04 extends AoC {
 
     boolean isCrossMas(Grid<Character> grid, Position position) {
         return grid.get(position) == 'A' &&
-                isMas(grid, position, Diagonals.NO, Diagonals.SE) && isMas(grid, position, Diagonals.NE, Diagonals.SO);
+                isMas(grid, position, Diagonal.NW, Diagonal.SE) && isMas(grid, position, Diagonal.NE, Diagonal.SW);
     }
 
-    boolean isMas(Grid<Character> grid, Position position, Diagonals n, Diagonals s) {
+    boolean isMas(Grid<Character> grid, Position position, Diagonal n, Diagonal s) {
         char nchar = grid.get(n.move(position));
         return switch (nchar) {
             case 'M' -> grid.get(s.move(position)) == 'S';
