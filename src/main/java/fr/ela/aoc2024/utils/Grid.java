@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -22,6 +23,10 @@ public class Grid<N> {
     }
 
     public static <K> Grid<K> parseCharactersGrid(List<String> lines, Function<Character, K> mapper) {
+        return parseCharactersGrid(lines, mapper, (p,k) -> {});
+    }
+
+    public static <K> Grid<K> parseCharactersGrid(List<String> lines, Function<Character, K> mapper, BiConsumer<Position, K> consumer) {
         int height = lines.size();
         int width = lines.get(0).length();
         Grid<K> grid = new Grid<>(width, height);
@@ -30,7 +35,9 @@ public class Grid<N> {
             for (int x = 0; x < width; x++) {
                 K k = mapper.apply(line.charAt(x));
                 if (k != null) {
-                    grid.map.put(new Position(x, y), k);
+                    Position p = new Position(x,y);
+                    grid.map.put(p, k);
+                    consumer.accept(p, k);
                 }
             }
         }
