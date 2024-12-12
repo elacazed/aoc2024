@@ -28,13 +28,9 @@ public class D12 extends AoC {
     //      ???
     //   est un coin.
     private boolean isCorner(Position p, Diagonal d, Set<Position> positions) {
-        if (d.directions().noneMatch(dir -> positions.contains(dir.move(p)))) {
-            return true;
-        }
-        if (!positions.contains(d.move(p)) && d.directions().allMatch(dir -> positions.contains(dir.move(p)))) {
-            return true;
-        }
-        return false;
+        boolean v = positions.contains(d.vertical().move(p));
+        boolean h = positions.contains(d.horizontal().move(p));
+        return (!v && !h) || (v && h && !positions.contains(d.move(p)));
     }
 
     private Long corners(Position position, Set<Position> plot) {
@@ -80,7 +76,7 @@ public class D12 extends AoC {
             Set<Position> plot = new HashSet<>();
             plot.add(p);
             positions.remove(p);
-            List<Position> neighbors = p.cardinalsList().stream().filter(n -> positions.contains(n) && !plot.contains(n)).toList();
+            List<Position> neighbors = p.cardinals().filter(n -> positions.contains(n) && !plot.contains(n)).toList();
             if (neighbors.isEmpty()) {
                 return plot;
             } else {
@@ -115,7 +111,6 @@ public class D12 extends AoC {
         private long fencingCost() {
             return getAllPlots().values().stream().flatMap(List::stream).mapToLong(this::fencingCost).sum();
         }
-
     }
 
     public void solve(List<String> input, String step, long expected1, long expected2) {

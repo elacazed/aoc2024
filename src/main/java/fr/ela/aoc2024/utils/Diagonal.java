@@ -32,4 +32,11 @@ public enum Diagonal {
     public Stream<Direction> directions() {
         return Stream.of(vertical, horizontal);
     }
+
+    public Direction vertical() {
+        return vertical;
+    }
+    public Direction horizontal() {
+        return horizontal;
+    }
 }
