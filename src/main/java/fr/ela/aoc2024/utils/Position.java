@@ -4,13 +4,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-public record Position(int x, int y) {
+public record Position(long x, long y) {
 
-    public int distance(Position other) {
+    public long distance(Position other) {
         return Math.abs(other.y - y) + Math.abs(other.x - x);
     }
 
-    public int distance() {
+    public long distance() {
         return x + y;
     }
 
@@ -31,7 +31,7 @@ public record Position(int x, int y) {
         return neighbours().toList();
     }
 
-    public Position modulo(int xmax, int ymax) {
+    public Position modulo(long xmax, long ymax) {
         return new Position(x % xmax, y % ymax);
     }
 

@@ -35,17 +35,17 @@ public class D08 extends AoC {
         }
 
         private List<Position> antiNodes(Position p1, Position p2, boolean allPositions) {
-            int dx = p2.x() - p1.x();
-            int dy = p2.y() - p1.y();
+            long dx = p2.x() - p1.x();
+            long dy = p2.y() - p1.y();
             List<Position> result = new ArrayList<>();
-            int start = 1;
-            int end = 2;
+            long start = 1;
+            long end = 2;
             if (allPositions) {
                 start = Math.min(Math.abs(grid.getWidth() / dx), Math.abs(grid.getHeight() / dy));
                 end = start;
             }
 
-            for (int i = -1 * start; i <= end; i++) {
+            for (long i = -1 * start; i <= end; i++) {
                 Position next = new Position(p1.x() + i * dx, p1.y() + i * dy);
                 if ((allPositions || i == -1 || i == 2) && grid.inBounds(next)) {
                     result.add(next);
