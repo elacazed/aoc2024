@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Grid<N> {
@@ -76,6 +78,15 @@ public class Grid<N> {
         map.put(pos, value);
     }
 
+    public void put(Position pos, N value, BiFunction<N,N,N> aggregator) {
+        N n = get(pos);
+        if (n == null) {
+            put(pos, value);
+        } else {
+            put(pos, aggregator.apply(n, value));
+        }
+    }
+
     public boolean inBounds(Position pos) {
         return pos.x() >= 0 && pos.y() >= 0 && pos.x() < width && pos.y() < height;
     }
@@ -94,6 +105,11 @@ public class Grid<N> {
 
     public List<Position> to(Position from, Set<Position> path) {
         return from.cardinals().filter(this::contains).filter(p -> !path.contains(p)).toList();
+    }
+
+    public String toString(Function<N, Character> mapper) {
+        List<char[]> lines = draw(mapper);
+        return lines.stream().map(String::new).collect(Collectors.joining("\n"));
     }
 
     public List<char[]> draw(Function<N, Character> mapper) {

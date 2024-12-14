@@ -35,6 +35,10 @@ public record Position(long x, long y) {
         return new Position(x % xmax, y % ymax);
     }
 
+    public Position move(long x, long y) {
+        return new Position(x + this.x(), y +this.y());
+    }
+
     public String toString() {
         return "[" + x + "," + y + "]";
     }

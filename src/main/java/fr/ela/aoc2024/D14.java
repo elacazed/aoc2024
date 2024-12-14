@@ -1,6 +1,7 @@
 package fr.ela.aoc2024;
 
 import fr.ela.aoc2024.utils.Diagonal;
+import fr.ela.aoc2024.utils.Grid;
 import fr.ela.aoc2024.utils.Position;
 
 import java.util.List;
@@ -75,9 +76,9 @@ public class D14 extends AoC {
         long time = System.currentTimeMillis();
         List<Robot> robots = input.stream().map(this::parse).toList();
 
-        List<Robot> moved = robots.stream().map(r -> r.move(times, width, height)).toList();
+        robots.forEach(r -> r.move(times, width, height));
 
-        long res = moved.stream().map(r -> r.getQuadrant(width, height))
+        long res = robots.stream().map(r -> r.getQuadrant(width, height))
                 .filter(Objects::nonNull)
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .values().stream().mapToLong(Long::valueOf).reduce(1, (x, y) -> x * y);
@@ -86,14 +87,32 @@ public class D14 extends AoC {
         System.out.println("Part 1 (" + expected1 + ") : " + res + " - " + time);
         time = System.currentTimeMillis();
 
-        time = System.currentTimeMillis() - time;
-        System.out.println("Part 2 (" + expected2 + ") : " + res + " - " + time);
+        robots = input.stream().map(this::parse).toList();
+        res = 7847;
+        if (width == 101) {
+            //for (int i = 0; i < 10000; i++) {
+            //    robots.forEach(r -> r.move(1, width, height));
+            //    Grid<Integer> grid = new Grid<>(width, height);
+            //    for (Robot robot : robots) {
+            //        grid.put(robot.position, 1, Integer::sum);
+            //    }
+            //    System.out.println("--- " + i + "----\n" + grid.toString(n -> n == null ? '.' : n.toString().charAt(0)));
+            //}
+            robots.forEach(r -> r.move(7847, width, height));
+            Grid<Integer> grid = new Grid<>(width, height);
+            for (Robot robot : robots) {
+                grid.put(robot.position, 1, Integer::sum);
+            }
+            System.out.println(grid.toString(n -> n == null ? '.' : n.toString().charAt(0)));
+            time = System.currentTimeMillis() - time;
+            System.out.println("Part 2 (" + expected2 + ") : " + res + " - " + time);
+        }
     }
 
     @Override
     public void run() {
         solve(list(getTestInputPath()), "Test", 100, 11, 7, 12, -1);
-        solve(list(getInputPath()), "Real", 100, 101, 103, -1, -1);
+        solve(list(getInputPath()), "Real", 100, 101, 103, -1, 7847);
     }
 }
 
