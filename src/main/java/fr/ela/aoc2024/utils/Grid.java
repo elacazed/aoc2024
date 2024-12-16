@@ -135,4 +135,8 @@ public class Grid<N> {
     public boolean isOnTheEdge(Position p) {
         return p.x() == 0 || p.y() == 0 || p.x() == width - 1 || p.y() == height - 1;
     }
+
+    public void clear() {
+        map.clear();
+    }
 }

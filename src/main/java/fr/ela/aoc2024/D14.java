@@ -4,6 +4,11 @@ import fr.ela.aoc2024.utils.Diagonal;
 import fr.ela.aoc2024.utils.Grid;
 import fr.ela.aoc2024.utils.Position;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -71,7 +76,7 @@ public class D14 extends AoC {
         }
     }
 
-    public void solve(List<String> input, String step, long times, int width, int height, long expected1, long expected2) {
+    public void solve(List<String> input, String step, long times, int width, int height, long expected1, long expected2) throws IOException {
         System.out.println("--- " + step + " ----");
         long time = System.currentTimeMillis();
         List<Robot> robots = input.stream().map(this::parse).toList();
@@ -88,21 +93,26 @@ public class D14 extends AoC {
         time = System.currentTimeMillis();
 
         robots = input.stream().map(this::parse).toList();
-        res = 7847;
+        //res = 7847;
         if (width == 101) {
-            //for (int i = 0; i < 10000; i++) {
-            //    robots.forEach(r -> r.move(1, width, height));
-            //    Grid<Integer> grid = new Grid<>(width, height);
-            //    for (Robot robot : robots) {
-            //        grid.put(robot.position, 1, Integer::sum);
-            //    }
-            //    System.out.println("--- " + i + "----\n" + grid.toString(n -> n == null ? '.' : n.toString().charAt(0)));
-            //}
-            robots.forEach(r -> r.move(7847, width, height));
+            Grid<Integer> grid = new Grid<>(width, height);
+            int i = 0;
+            do {
+                i++;
+                grid.clear();
+                robots.forEach(r -> r.move(1, width, height));
+                for (Robot robot : robots) {
+                    grid.put(robot.position, 1, Integer::sum);
+                }
+            }
+            while (! grid.toString(n -> n == null ? '.' : n.toString().charAt(0)).contains("1111111111111111"));
+/*            robots.forEach(r -> r.move(7847, width, height));
             Grid<Integer> grid = new Grid<>(width, height);
             for (Robot robot : robots) {
                 grid.put(robot.position, 1, Integer::sum);
             }
+*/
+
             System.out.println(grid.toString(n -> n == null ? '.' : n.toString().charAt(0)));
             time = System.currentTimeMillis() - time;
             System.out.println("Part 2 (" + expected2 + ") : " + res + " - " + time);
@@ -111,8 +121,12 @@ public class D14 extends AoC {
 
     @Override
     public void run() {
-        solve(list(getTestInputPath()), "Test", 100, 11, 7, 12, -1);
-        solve(list(getInputPath()), "Real", 100, 101, 103, -1, 7847);
+        try {
+            solve(list(getTestInputPath()), "Test", 100, 11, 7, 12, -1);
+            solve(list(getInputPath()), "Real", 100, 101, 103, 225648864, 7847);
+        } catch (Exception e) {
+
+        }
     }
 }
 
