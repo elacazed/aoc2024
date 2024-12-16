@@ -93,7 +93,7 @@ public class D14 extends AoC {
         time = System.currentTimeMillis();
 
         robots = input.stream().map(this::parse).toList();
-        //res = 7847;
+
         if (width == 101) {
             Grid<Integer> grid = new Grid<>(width, height);
             int i = 0;
@@ -105,14 +105,9 @@ public class D14 extends AoC {
                     grid.put(robot.position, 1, Integer::sum);
                 }
             }
-            while (! grid.toString(n -> n == null ? '.' : n.toString().charAt(0)).contains("1111111111111111"));
-/*            robots.forEach(r -> r.move(7847, width, height));
-            Grid<Integer> grid = new Grid<>(width, height);
-            for (Robot robot : robots) {
-                grid.put(robot.position, 1, Integer::sum);
-            }
-*/
-
+            while (! grid.getPositionsOf(2).isEmpty());
+            //while (! grid.toString(n -> n == null ? '.' : n.toString().charAt(0)).contains("1111111"));
+            res = i;
             System.out.println(grid.toString(n -> n == null ? '.' : n.toString().charAt(0)));
             time = System.currentTimeMillis() - time;
             System.out.println("Part 2 (" + expected2 + ") : " + res + " - " + time);
