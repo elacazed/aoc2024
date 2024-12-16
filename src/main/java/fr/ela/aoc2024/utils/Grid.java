@@ -47,8 +47,13 @@ public class Grid<N> {
     }
 
     public List<Position> getPositionsOf(N value) {
-        return map.entrySet().stream().filter(e -> e.getValue().equals(value)).map(Map.Entry::getKey).toList();
+        return streamPositionsOf(value).toList();
     }
+
+    public Stream<Position> streamPositionsOf(N value) {
+        return map.entrySet().stream().filter(e -> e.getValue().equals(value)).map(Map.Entry::getKey);
+    }
+
 
     public Stream<Position> stream() {
         return map.keySet().stream();
